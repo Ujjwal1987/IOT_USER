@@ -25,6 +25,8 @@ public class Device_list extends AppCompatActivity {
 
     Socket sock;
     List<Device> device_data;
+    public Socket_handler sh;
+    public String admin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +34,7 @@ public class Device_list extends AppCompatActivity {
         setContentView(R.layout.activity_device_list);
         Bundle extras = getIntent().getExtras();
         final Socket_handler sh =extras.getParcelable("sockethandler");
+        admin = extras.getString("admin");
         sock = Socket_handler.getSocket();
         Transmit_data td = new Transmit_data();
         device_data = new ArrayList<>();
@@ -72,6 +75,7 @@ public class Device_list extends AppCompatActivity {
 //                            {
                                 Intent Third = new Intent(Device_list.this, Dev_cntrl.class);
                                 Third.putExtra("sockethandler", (Serializable) sh);
+                                Third.putExtra("admin", admin);
                                 startActivity(Third);
                                 finish();
 //                            }
@@ -150,8 +154,29 @@ public class Device_list extends AppCompatActivity {
             String temp = "exit";
             String Result = "";
             Transmit_data_inter tdi = new Transmit_data_inter();
-            tdi.execute(temp);
+            try {
+                Result = tdi.execute(temp).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            Intent third = new Intent(Device_list.this, Agreegatorlist.class);
+            third.putExtra("sockethandler", (Serializable) sh);
+            third.putExtra("admin",admin);
+            startActivity(third);
             finish();
+/*            if(admin.equals("admin")){
+                Intent third = new Intent(Device_list.this, User_grp_admin.class);
+                third.putExtra("sockethandler", (Serializable) sh);
+                startActivity(third);
+            }
+            else{
+                Intent third = new Intent(Device_list.this, User_function_non_admin.class);
+                third.putExtra("sockethandler", (Serializable) sh);
+                startActivity(third);
+            }*/
+
         }
 
         return super.onKeyDown(keyCode, event);

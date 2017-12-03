@@ -15,9 +15,11 @@ import android.support.v4.app.TaskStackBuilder;
 
 import java.io.BufferedReader;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 
 
@@ -28,6 +30,7 @@ import java.net.Socket;
 public class Myservice extends Service {
 
     Socket sock1;
+    String UID;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -41,7 +44,8 @@ public class Myservice extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Thread ServerSockethread = new Thread(new ServerSockethread());
+        UID = intent.getStringExtra("UID");
+        Thread ServerSockethread = new Thread(new ServerSockethread(UID));
         ServerSockethread.start();
         //Toast.makeText(getApplicationContext(), String.valueOf(sock1), Toast.LENGTH_LONG).show();
  /*       new Thread(new Runnable() {
@@ -73,9 +77,10 @@ public class Myservice extends Service {
 
     private class ServerSockethread extends Thread{
         Socket sock;
+        String uid;
 
-        public ServerSockethread() {
-
+        public ServerSockethread(String uid) {
+            this.uid = uid;
         }
 
         @Override
@@ -85,13 +90,23 @@ public class Myservice extends Service {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            BufferedWriter bw;
+            try {
+                bw = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
+                bw.write(uid);
+                bw.newLine();
+                bw.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             while(true){
                 try {
 
                     BufferedReader br = new BufferedReader(new InputStreamReader(sock.getInputStream()));
                     String result = br.readLine();
                     shownotification(result);
-                    br.close();
+//                    br.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

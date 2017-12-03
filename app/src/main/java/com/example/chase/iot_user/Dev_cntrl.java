@@ -1,11 +1,11 @@
 package com.example.chase.iot_user;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -14,15 +14,16 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.Serializable;
 import java.net.Socket;
-import java.util.ArrayList;
-
-import static java.lang.System.out;
+import java.util.concurrent.ExecutionException;
 
 public class Dev_cntrl extends AppCompatActivity {
 
     public Socket S1;
+    public String admin;
+    public Socket_handler sh;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +40,10 @@ public class Dev_cntrl extends AppCompatActivity {
         String temp_EE8 = extras.getString("EE8");
         String IPAddress = extras.getString("IPaddress");
         final String UID = extras.getString("UID");
-        Socket_handler sh = extras.getParcelable("sockethandler");
+        sh = extras.getParcelable("sockethandler");
+        admin = extras.getString("admin");
         S1 = Socket_handler.getSocket();
-        Toast.makeText(getApplicationContext(),"i am here", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "i am here", Toast.LENGTH_LONG).show();
 /*        EditText ET1 = (EditText) findViewById(R.id.ET1);
         EditText ET2 = (EditText) findViewById(R.id.ET2);
         EditText ET3 = (EditText) findViewById(R.id.ET3);
@@ -200,14 +202,6 @@ public class Dev_cntrl extends AppCompatActivity {
 
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            finish();
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
     public class Transmit_data extends AsyncTask<String, Void, Void> {
 
         @Override
@@ -224,7 +218,8 @@ public class Dev_cntrl extends AppCompatActivity {
 
             return null;
         }
-    }
+
+
 
 /*    public class MyTask extends AsyncTask<String, Void, Void> {
 
@@ -248,4 +243,60 @@ public class Dev_cntrl extends AppCompatActivity {
             return null;
         }
     }*/
+    }
+
+    public class Transmit_data_inter extends AsyncTask<String, Void, Void> {
+
+ //       @Override
+ /*       protected Void doInBackground(Object... params) {
+            String Result = "";
+            try {
+                BufferedWriter bw;
+                bw = new BufferedWriter(new OutputStreamWriter(S1.getOutputStream()));
+                bw.write(params[0]);
+                bw.newLine();
+                bw.flush();
+                BufferedReader br;
+                br = new BufferedReader(new InputStreamReader(S1.getInputStream()));
+                Result = br.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }*/
+
+        @Override
+        protected Void doInBackground(String... strings) {
+
+            try {
+                BufferedWriter bw;
+                bw = new BufferedWriter(new OutputStreamWriter(S1.getOutputStream()));
+                bw.write(strings[0]);
+                bw.newLine();
+                bw.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            String temp = "exit";
+            String Result = "";
+            Transmit_data_inter tdi = new Transmit_data_inter();
+                tdi.execute(temp);
+                Intent third = new Intent(Dev_cntrl.this, Device_list.class);
+                third.putExtra("sockethandler", (Serializable) sh);
+                third.putExtra("admin", admin);
+                startActivity(third);
+                finish();
+
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
 }

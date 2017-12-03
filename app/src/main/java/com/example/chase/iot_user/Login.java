@@ -60,8 +60,10 @@ public class Login extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    if(result.equals("1")){
-                        startservice(v);
+                    String []temp = result.split(":");
+
+                    if(temp[0].equals("1")){
+                        startservice(v, temp[1]);
                         Intent first = new Intent(Login.this, Group_List.class);
                         Socket_handler sh = null;
                         first.putExtra("sockethandler", (Serializable) sh);
@@ -113,8 +115,9 @@ public class Login extends AppCompatActivity {
         }
     }
 
-        public void startservice(View v){
+        public void startservice(View v, String UID){
             Intent i = new Intent(this,Myservice.class);
+            i.putExtra("UID", UID);
             startService(i);
 }
 

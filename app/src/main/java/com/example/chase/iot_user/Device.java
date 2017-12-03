@@ -20,11 +20,11 @@ public class Device {
         Dev_type = dev_type;
     }
 
+    public void setDev_id(String dev_id) {
+        Dev_id = dev_id;
+    }
     public String getDev_id() {
         return Dev_id;
     }
 
-    public void setDev_id(String dev_id) {
-        Dev_id = dev_id;
-    }
 }

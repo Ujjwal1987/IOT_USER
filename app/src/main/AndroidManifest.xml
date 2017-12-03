@@ -37,7 +37,9 @@
             android:exported="false" />
 
         <activity android:name=".Device_list" />
-        <activity android:name=".Dev_cntrl"></activity>
+        <activity android:name=".Dev_cntrl" />
+        <activity android:name=".Agreegatorlist" />
+        <activity android:name=".agreegator_list"></activity>
     </application>
 
 </manifest>

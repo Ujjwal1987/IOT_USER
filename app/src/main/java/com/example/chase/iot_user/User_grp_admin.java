@@ -18,11 +18,12 @@ import java.io.Serializable;
 import java.net.Socket;
 import java.util.concurrent.ExecutionException;
 
-public class User_grp_admin extends AppCompatActivity {
+public class  User_grp_admin extends AppCompatActivity {
 
     public Button add_usr,cntrl_dev, add_exist_usr;
     Socket sock;
     public Socket_handler sh;
+    public String admin = "admin";
 
 
     public void main(){
@@ -58,8 +59,9 @@ public class User_grp_admin extends AppCompatActivity {
             public void onClick(View v) {
                 Transmit_data td = new Transmit_data();
                 td.execute("cntrl_dev");
-                Intent third = new Intent(User_grp_admin.this, Device_list.class);
+                Intent third = new Intent(User_grp_admin.this, Agreegatorlist.class);
                 third.putExtra("sockethandler", (Serializable) sh);
+                third.putExtra("admin",admin);
                 startActivity(third);
                 finish();
             }
